@@ -4,10 +4,10 @@ sudo apt-get update -y
 sudo apt-get install -y openjdk-8-jdk
 
 # spark download and setup
-wget https://d3kbcqa49mib13.cloudfront.net/spark-1.6.1-bin-hadoop2.6.tgz -O /tmp/spark-1.6.1.tgz
+wget https://d3kbcqa49mib13.cloudfront.net/spark-2.2.0-bin-hadoop2.6.tgz -O /tmp/spark-2.2.0.tgz
 sudo ufw disable
 sudo mkdir -p /usr/lib/spark
-sudo tar -xf /tmp/spark-1.6.1.tgz --strip 1 -C /usr/lib/spark
+sudo tar -xf /tmp/spark-2.2.0.tgz --strip 1 -C /usr/lib/spark
 echo "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> ~/.bash_profile
 echo "export PATH=\$JAVA_HOME/bin:\$PATH" >> ~/.bash_profile
 echo "export SPARK_HOME=/usr/lib/spark" >> ~/.bash_profile
@@ -50,9 +50,9 @@ sudo mkdir -p /usr/lib/spark/logs/eventlog
 sudo chmod -R 777 /usr/lib/spark/logs
 
 # zeppelin setup
-wget http://apache.mivzakim.net/zeppelin/zeppelin-0.6.0/zeppelin-0.6.0-bin-all.tgz -O /tmp/zeppelin-0.6.0.tgz
+wget http://apache.mivzakim.net/zeppelin/zeppelin-0.6.0/zeppelin-0.8.0-bin-all.tgz -O /tmp/zeppelin-0.8.0.tgz
 sudo mkdir -p /usr/lib/zeppelin
-sudo tar -xf /tmp/zeppelin-0.6.0.tgz --strip 1 -C /usr/lib/zeppelin
+sudo tar -xf /tmp/zeppelin-0.8.0.tgz --strip 1 -C /usr/lib/zeppelin
 
 # zeppelin config
 sudo rm /usr/lib/zeppelin/conf/zeppelin-env.sh
