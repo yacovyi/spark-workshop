@@ -4,10 +4,10 @@ sudo apt-get update -y
 sudo apt-get install -y openjdk-8-jdk
 
 # spark download and setup
-wget https://d3kbcqa49mib13.cloudfront.net/spark-2.2.0-bin-hadoop2.6.tgz -O /tmp/spark-2.2.0.tgz
+wget https://www-us.apache.org/dist/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz -O /tmp/spark-2.4.0.tgz
 sudo ufw disable
 sudo mkdir -p /usr/lib/spark
-sudo tar -xf /tmp/spark-2.2.0.tgz --strip 1 -C /usr/lib/spark
+sudo tar -xf /tmp/spark-2.4.0.tgz --strip 1 -C /usr/lib/spark
 echo "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> ~/.bash_profile
 echo "export PATH=\$JAVA_HOME/bin:\$PATH" >> ~/.bash_profile
 echo "export SPARK_HOME=/usr/lib/spark" >> ~/.bash_profile
