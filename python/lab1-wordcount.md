@@ -86,7 +86,7 @@ lines = sc.textFile("/home/ubuntu/data/*.txt")
 words = lines.flatMap(lambda line: line.split())
 pairs = words.map(lambda word: (word, 1))
 freqs = pairs.reduceByKey(lambda a, b: a + b)
-top10 = freqs.sortBy(lambda (word, count): -count).take(10)
+top10 = freqs.sortBy(lambda x: x[1], ascending=False).take(10)
 for (word, count) in top10:
     print("the word '%s' appears %d times" % (word, count))
 ```
