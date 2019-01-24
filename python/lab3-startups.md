@@ -68,7 +68,7 @@ spark.udf.register("total_funding", lambda investments: sum(
     ), IntegerType())
 ```
 
-Test your function by retrieving the total funding for a few companies, such as Facebook, Paypal, and Alibaba. Now, find the average ratio between the acquisition price and the total funding (which, in a simplistic way, represents return on investment).
+Test your function by retrieving the total funding for a few companies, such as Facebook, PayPal, and Alibaba. Now, find the average ratio between the acquisition price and the total funding (which, in a simplistic way, represents return on investment).
 
 **Solution**:
 
