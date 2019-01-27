@@ -45,8 +45,8 @@ columns = ['id', 'price', 'date', 'zip', 'type', 'new', 'duration', 'PAON',
            'status']
 
 df = spark.read.option("inferSchema", "true").option("header", "false").csv("file:///home/ubuntu/data/prop-prices.csv")
-selectExpr = map(lambda (i, c): "_c%d as %s" % (i, c), enumerate(columns))
-df = df.selectExpr(selectExpr)
+for i, col in enumerate(df.columns):                                        
+     df = df.withColumnRenamed(col, columns[i])
 df.registerTempTable("properties")
 df.persist()
 ```
