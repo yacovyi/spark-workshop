@@ -103,9 +103,9 @@ monthPrices = spark.sql("""select   year(date), month(date), avg(price)
                                 group by year(date), month(date)
                                 order by year(date), month(date)""").collect()
 import matplotlib.pyplot as plt
-values = map(lambda row: row._c2, monthPrices)
+values = map(lambda row: row[2], monthPrices)
 plt.rcdefaults()
-plt.scatter(xrange(0,len(values)), values)
+plt.scatter(range(0,len(monthPrices)), list(values))
 plt.show()
 ```
 
