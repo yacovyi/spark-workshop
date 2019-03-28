@@ -20,7 +20,9 @@ ___
 
 Open a PySpark shell (by running `bin/pyspark` from the Spark installation directory in a terminal window). Note that you have access to a pre-initialized `SparkSession` object named `spark`.
 
-Create a `DataFrame` from the JSON file so that its schema is automatically inferred, print out the resulting schema, and register it as a temporary table called "companies".
+Create a `DataFrame` from the JSON file so that its schema is automatically inferred, and print out the resulting schema.
+
+Pay attention, to use the **Fluent query API** and not SQL.
 
 **Solution**:
 
