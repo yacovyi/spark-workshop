@@ -39,7 +39,8 @@ First, let's talk about the money; figure out what the average acquisition price
 **Solution**:
 
 ```python
-spark.sql("select avg(acquisition.price_amount) from companies").first()
+from pyspark.sql.functions import avg,col
+companies.select(avg("acquisition.price_amount")).first()
 ```
 
 Not too shabby. Let's get some additional detail -- print the average acquisition price grouped by number of years the company was active.
@@ -47,13 +48,13 @@ Not too shabby. Let's get some additional detail -- print the average acquisitio
 **Solution**:
 
 ```python
-spark.sql(
-    """select   acquisition.acquired_year-founded_year as years_active,
-                avg(acquisition.price_amount) as acq_price
-       from     companies
-       where    acquisition.price_amount is not null
-       group by acquisition.acquired_year-founded_year
-       order by acq_price desc""").collect()
+companies.select(col("acquisition.price_amount"),(col("acquisition.acquired_year") - col("founded_year")).alias("years_active")) \
+    .where("price_amount is not null") \
+    .groupBy("years_active") \
+    .avg("price_amount") \
+    .withColumnRenamed("avg(price_amount)", "acq_price") \
+    .sort("acq_price", ascending = False) \
+    .collect()
 ```
 
 Finally, let's try to figure out the relationship between the company's total funding and acquisition price. In order to do that, you'll need a UDF (user-defined function) that, given a company, returns the sum of all its funding rounds. First, build that function and register it with the name "total_funding".
@@ -61,11 +62,9 @@ Finally, let's try to figure out the relationship between the company's total fu
 **Solution**:
 
 ```python
-from pyspark.sql.types import IntegerType
-
-spark.udf.register("total_funding", lambda investments: sum(
-      [inv.funding_round.raised_amount or 0 for inv in investments]
-    ), IntegerType())
+@udf("int")
+def total_funding(investments):
+  return sum([inv.funding_round.raised_amount or 0 for inv in investments])
 ```
 
 Test your function by retrieving the total funding for a few companies, such as Facebook, PayPal, and Alibaba. Now, find the average ratio between the acquisition price and the total funding (which, in a simplistic way, represents return on investment).
@@ -73,11 +72,11 @@ Test your function by retrieving the total funding for a few companies, such as 
 **Solution**:
 
 ```python
-spark.sql(
-    """select avg(acquisition.price_amount/total_funding(investments))
-       from   companies
-       where  acquisition.price_amount is not null
-       and    total_funding(investments) != 0""").collect()
+companies.select(col("acquisition.price_amount") / total_funding("investments")) \
+         .withColumnRenamed("(acquisition.price_amount / total_funding(investments))", "roi") \
+         .where((col("acquisition.price_amount").isNotNull()) & (total_funding("investments") != 0)) \
+         .groupBy() \
+         .avg("roi").first()
 ```
 
 ___
