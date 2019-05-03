@@ -2,9 +2,7 @@
 
 The purpose of this lab is to make sure you are sufficiently acquainted with Python to succeed in the rest of the labs. If Python is one of your primary language, this should be smooth sailing; otherwise, please make sure you complete these tasks before moving on to the next labs.
 
-This lab assumes that you have Python 2.6+ installed on your system. If you're using the instructor-provided appliance, you're all set. Otherwise, please make sure that Python is installed and is in the path, so you can type `python` to launch it from a terminal window.
-
-> If you're installing Python yourself, please install Python 2.x and not 3.x. Even though everything in these labs is supposed to work just fine with Python 3, a lot of libraries and frameworks still don't support it.
+This lab assumes that you have Python 3.6+ installed on your system. If you're using the instructor-provided appliance, you're all set. Otherwise, please make sure that Python is installed and is in the path, so you can type `python` to launch it from a terminal window.
 
 ___
 
@@ -13,8 +11,8 @@ ___
 Open a terminal window and run `python`. An interactive prompt similar to the following should appear:
 
 ```
-Python 2.7.6 (default, Jun 22 2015, 17:58:13) 
-[GCC 4.8.2] on linux2
+Python 3.6.0 |Anaconda 4.3.1 (64-bit)| (default, Dec 23 2016, 12:22:00) 
+[GCC 4.4.7 20120313 (Red Hat 4.4.7-1)] on linux
 Type "help", "copyright", "credits" or "license" for more information.
 >>> 
 ```
