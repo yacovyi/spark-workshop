@@ -2,7 +2,7 @@
 
 In this lab, you will become acquainted with your Spark installation, and run your first Spark job -- a multi-file word count.
 
-> The instructor should have explained how to install Spark on your machine. One option is to use the instructor's appliance, which you can access through any web browser. The appliance has Spark 1.6.2 installed, and has all the necessary data files for this and subsequent exercises in the `~/data` directory.
+> The instructor should have explained how to install Spark on your machine. One option is to use the instructor's appliance, which you can access through any web browser. The appliance has Spark 2.4.0 installed, and has all the necessary data files for this and subsequent exercises in the `~/data` directory.
 > 
 > Alternatively, you can install Spark yourself. Download it from [spark.apache.org](http://spark.apache.org/downloads.html) -- make sure to select a prepackaged binary version, such as [Spark 2.4.0 for Hadoop 2.7](https://www-us.apache.org/dist/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz). Extract the archive to some location on your system. Then, download the [data files](../data.zip) for the labs and place them in `~/data`.
 > 

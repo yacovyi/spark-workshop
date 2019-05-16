@@ -1,7 +1,3 @@
-## Please Read before proceeding
- **NOTE**: This lab offers suggets a way to load and parse CSV files, using python library. In Spark 2.x, the [spark-csv package](https://github.com/databricks/spark-csv) has been integrated into the Spark code-base. You can easily load CSV files using SparkSession (spark.read.csv). This lab will only be relevent for Spark 1.x
-
-
 ### Lab 2: Flight Delay Analysis
 
 In this lab, you will analyze a real-world dataset -- information about US flight delays in January 2016, courtesy of the United States Department of Transportation. You can [download additional datasets](http://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236&DB_Short_Name=On-Time) later. Here's another example you might find interesting -- [US border crossing/entry data per port of entry](http://transborder.bts.gov/programs/international/transborder/TBDR_BC/TBDR_BCQ.html).
@@ -44,43 +40,15 @@ This displays the first 20 fields of the 10 sampled records from the file. The f
 
 ___
 
-#### Task 2: Parsing CSV Data
+#### Task 2: Importing the Data
 
-Next, you have to parse the CSV data. The header line provides the column names, and then each subsequent line can be parsed taking these into account. Python has a built-in `csv` module (unrelated to Spark) that you can use to parse CSV lines. Try it out in a Python shell (by running `python` in a terminal window) or the Pyspark shell (by running `bin/pyspark` from Spark's installation directory in a terminal window):
-
-```python
-import csv
-from StringIO import StringIO
-
-si = StringIO('"Alice",14,"panda"')
-fields = ["name", "age", "favorite animal"]
-csv.DictReader(si, fieldnames=fields).next()
-```
-
-Great! Next, write a function that parses one line from the flight delays CSV file. You can call that function `parseLine`, and it should return the Python dict that `DictReader.next` returns.
-
-**Solution**:
+Spark 2.X ships with a built-in csv reader for the DataFrame API. Because DataFrame is an abstraction over the RDD API, we will read the airline-delays.csv file as DataFrame while using the underneath RDD Object. In the next slides, we will talk more deeply about the DataFrame API, but for now, just use these lines in order to read the file: 
 
 ```python
-def parseLine(line, fieldnames):
-    si = StringIO(line)
-    return csv.DictReader(si, fieldnames=fieldnames).next()
+flightsDf = spark.read.option("header", "true").csv("file:////home/ubuntu/data/airline-delays.csv")
+flights = flightsDf.rdd
 ```
-
-Next, create an RDD based on the `airline-delays.csv` file, and map each line of that file using the `parseLine` function you wrote. The result should be an RDD of Python dicts representing the flight delay data. Note that the first line (the header line) should be discarded.
-
-**Solution**:
-
-```python
-rdd = sc.textFile("file:////home/ubuntu/data/airline-delays.csv")
-headerline = rdd.first()
-fieldnames = filter(lambda field: len(field) > 0,
-                map(lambda field: field.strip('"'), headerline.split(',')))
-flights = rdd.filter(lambda line: line != headerline)       \
-             .map(lambda line: parseLine(line, fieldnames))
-flights.persist()
-```
-
+.
 ___
 
 #### Task 3: Querying Flights and Delays
@@ -95,22 +63,6 @@ flightsByCarrier = flights.filter(
                            .map(lambda flight: flight['Carrier']) \
                            .countByValue()
 sorted(flightsByCarrier.items(), key=lambda p: -p[1])[0]
-```
-
-Overall, which airline has the worst average delay? How bad was that delay?
-
-> **HINT**: Use `combineByKey`.
-
-**Solution**:
-
-```python
-flights.filter(lambda f: f['ArrDelay'] != '')                      \
-       .map(lambda f: (f['Carrier'], float(f['ArrDelay'])))        \
-       .combineByKey(lambda d: (d, 1),
-                     lambda s, d: (s[0]+d, s[1]+1),
-                     lambda s1, s2: (s1[0]+s2[0], s1[1]+s2[1]))    \
-       .map(lambda (k, (s, c)): (k, s/float(c)))                   \
-       .collect()
 ```
 
 Living in Chicago, IL, what are the farthest 10 destinations that you could fly to? (Note that our dataset contains only US domestic flights.)
@@ -137,34 +89,6 @@ flights.filter(lambda flight: flight['OriginCityName'] == "New York, NY" and
        .reduceByKey(lambda a, b: a + b)                                       \
        .sortBy(lambda (carrier, delay): delay)                                \
        .first()
-```
-
-Suppose you live in San Jose, CA, and there don't seem to be many direct flights taking you to Boston, MA. Of all the 1-stop flights, which would be the best option in terms of average arrival delay? (It's OK to assume that every pair of flights from San Jose to X and from X to Boston is an option that you could use.)
-
-> **NOTE**: To answer this question, you will probably need a cartesian product of the dataset with itself. Beside the fact that it's a fairly expensive operation, we haven't learned about multi-RDD operations yet. Still, you can explore the `join` RDD method, which applies to pair (key-value) RDDs, discussed later in our workshop.
-
-**Solution**:
-
-```python
-flightsByDst = flights.filter(lambda f: f['OriginCityName'] == 'San Jose, CA')\
-                      .map(lambda f: (f['DestCityName'], f))
-flightsByOrg = flights.filter(lambda f: f['DestCityName'] == 'Boston, MA')    \
-                      .map(lambda f: (f['OriginCityName'], f))
-
-def addDelays(f1, f2):
-    total = 0
-    total += float(f1['ArrDelay']) if f1['ArrDelay'] != '' else 0
-    total += float(f2['ArrDelay']) if f2['ArrDelay'] != '' else 0
-    return total
-
-flightsByDst.join(flightsByOrg)                                       \
-            .map(lambda (city, (f1, f2)): (city, addDelays(f1, f2)))  \
-            .combineByKey(lambda d: (d, 1),
-                          lambda s, d: (s[0]+d, s[1]+1),
-                          lambda s1, s2: (s1[0]+s2[0], s1[1]+s2[1]))  \
-            .map(lambda (city, s): (city, s[0]/float(s[1])))          \
-            .sortBy(lambda (city, delay): delay)                      \
-            .first()
 ```
 
 ___

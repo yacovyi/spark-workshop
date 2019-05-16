@@ -18,26 +18,7 @@ ___
 
 #### Task 2: Importing the Data
 
-In a previous lab, we used the Python `csv` module to parse CSV files. However, because we're working with structured data, the Spark SQL framework can be easier to use and provide better performance. We are going to use the `spark.read.csv` to create a `DataFrame` from an RDD of CSV lines.
-
-> **NOTE**: The `pyspark_csv.py` file, a third-party package for loading csv files for Spark 1.x, is in the `~/externals` directory on the appliance. You can also [download it yourself](https://github.com/seahboonsiew/pyspark-csv) and place it in some directory.
-> 
-> This module also depends on the `dateutils` module, which typically doesn't ship with Python. It is already installed in the appliance. To install it on your own machine, run the following from a terminal window:
-
-```
-sudo easy_install dateutils
-```
-
-To import `pyspark_csv` (if needed in Spark 1.x, for Spark 2.x, skip this step), you'll need the following snippet of code that adds its path to the module search path, and adds it to the Spark executors so they can find it as well:
-
-```python
-import sys
-sys.path.append('/home/ubuntu/externals')   # replace as necessary
-import pyspark_csv
-sc.addFile('/home/ubuntu/externals/pyspark_csv.py')    # ditto
-```
-
-Next, load the `prop-prices.csv` file as an RDD, and use the `csvToDataFrame` function from the `pyspark_csv` module to create a `DataFrame` and register it as a temporary table so that you can run SQL queries:
+Next, load the `prop-prices.csv` file as an `DataFrame`, and register it as a temporary table so that you can run SQL queries:
 
 ```python
 columns = ['id', 'price', 'date', 'zip', 'type', 'new', 'duration', 'PAON',
@@ -113,4 +94,4 @@ ___
 
 #### Discussion
 
-Now that you have experience in working with Spark SQL and `DataFrames`, what are the advantages and disadvantages of using it compared to the core RDD functionality (such as `map`, `filter`, `reduceByKey`, and so on)? Consider which approach produces more maintainable code, offers more opportunities for optimization, makes it easier to solve certain problems, and so on.
+Now that you have experience in working with SQL, what are the advantages and disadvantages of using it compared to the Fluent query API?
