@@ -64,6 +64,7 @@ Finally, let's try to figure out the relationship between the company's total fu
 **Solution**:
 
 ```python
+from pyspark.sql.functions import udf
 @udf("int")
 def total_funding(investments):
   return sum([inv.funding_round.raised_amount or 0 for inv in investments])
